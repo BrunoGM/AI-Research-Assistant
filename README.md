@@ -1,17 +1,7 @@
-# AI Research Assistant 🧠
+# AI Research Assistant 
 
 A modern web application that provides AI-powered research assistance, similar to Perplexity AI. Built with Python Flask and Google's Gemini API, this application offers intelligent answers by searching and analyzing web content in real-time.
 
-![AI Research Assistant Screenshot](screenshot.png)
-
-## ✨ Features
-
-- 🔍 Real-time web search and content analysis
-- 🤖 AI-powered comprehensive answers using Google's Gemini
-- 🌐 Source attribution with clickable links
-- 💡 Related questions suggestions
-- 🎨 Modern dark theme UI
-- 📱 Responsive design for all devices
 
 ## 🚀 Getting Started
 
@@ -93,21 +83,8 @@ ai-research-assistant/
 └── README.md          # Project documentation
 ```
 
-## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
 
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
 
 - Google Gemini API for providing the AI capabilities
 - Flask framework for the web application structure
