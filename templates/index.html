@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Research Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #4f46e5;
+            --background-color: #1a1a1a;
+            --text-color: #ffffff;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 1rem 0;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .search-box {
+            background: #2d2d2d;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-control {
+            background: #363636;
+            border: 2px solid #404040;
+            color: white;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus {
+            background: #404040;
+            border-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: #888;
+        }
+
+        .btn-search {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-search:hover {
+            background: var(--secondary-color);
+        }
+
+        .response-box {
+            background: #2d2d2d;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 0.5rem;
+        }
+
+        .source-item {
+            background: #363636;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .source-item:hover {
+            background: #404040;
+        }
+
+        .related-question {
+            background: #363636;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+
+        .related-question:hover {
+            background: #404040;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-color);
+        }
+
+        .loading .spinner-border {
+            color: var(--primary-color);
+        }
+
+        pre, code {
+            background: #363636;
+            color: #e0e0e0;
+        }
+
+        .content-section {
+            background: #2d2d2d;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .answer-text {
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: var(--text-color);
+        }
+
+        .source-item {
+            background: #363636;
+            padding: 1rem;
+            border-radius: 8px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .source-item:hover {
+            background: #404040;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .related-question {
+            background: #363636;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .related-question:hover {
+            background: #404040;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-brain me-2"></i>AI Research Assistant
+            </span>
+        </div>
+    </nav>
+
+    <div class="search-container">
+        <div class="search-box">
+            <form method="POST" action="/search" id="searchForm">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="query" 
+                           placeholder="Ask anything... (e.g., 'Latest developments in quantum computing')" required>
+                    <button class="btn btn-search" type="submit">
+                        <i class="fas fa-search me-2"></i>Search
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="loading">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Searching across the web...</p>
+        </div>
+
+        {% if response %}
+        <div class="response-box">
+            <div id="formatted-response">{{ response|safe }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function() {
+            document.querySelector('.loading').style.display = 'block';
+        });
+
+        // Improved markdown formatting
+        if (document.querySelector('.response-box')) {
+            const response = document.getElementById('formatted-response');
+            let content = response.innerHTML;
+            
+            // Split content into sections
+            const sections = content.split(/##\s+/g).filter(Boolean);
+            let formattedContent = '';
+            
+            sections.forEach(section => {
+                const lines = section.trim().split('\n');
+                const title = lines[0].trim();
+                const body = lines.slice(1).join('\n').trim();
+                
+                let icon = 'info-circle';
+                if (title.toLowerCase().includes('answer')) icon = 'lightbulb';
+                if (title.toLowerCase().includes('sources')) icon = 'link';
+                if (title.toLowerCase().includes('related')) icon = 'question-circle';
+                
+                formattedContent += `
+                    <div class="content-section mb-4">
+                        <h3 class="section-title">
+                            <i class="fas fa-${icon} me-2"></i>${title}
+                        </h3>
+                        <div class="section-content">
+                `;
+                
+                if (title.toLowerCase().includes('sources')) {
+                    // Format URLs as clickable links
+                    const urls = body.match(/https?:\/\/[^\s]+/g) || [];
+                    urls.forEach(url => {
+                        formattedContent += `
+                            <a href="${url}" class="source-item d-block mb-2" target="_blank">
+                                <i class="fas fa-external-link-alt me-2"></i>${url}
+                            </a>
+                        `;
+                    });
+                } else if (title.toLowerCase().includes('related')) {
+                    // Format bullet points as clickable questions
+                    const questions = body.split('\n').filter(line => line.trim().startsWith('-'));
+                    questions.forEach(question => {
+                        const q = question.replace(/^-\s*/, '').trim();
+                        formattedContent += `
+                            <div class="related-question" onclick="submitQuestion(this.textContent)">
+                                <i class="fas fa-arrow-right me-2"></i>${q}
+                            </div>
+                        `;
+                    });
+                } else {
+                    // Regular paragraphs with better spacing
+                    formattedContent += `<div class="answer-text">${body}</div>`;
+                }
+                
+                formattedContent += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            response.innerHTML = formattedContent;
+        }
+
+        function submitQuestion(question) {
+            const input = document.querySelector('input[name="query"]');
+            input.value = question;
+            document.getElementById('searchForm').submit();
+        }
+    </script>
+</body>
+</html>
