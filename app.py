@@ -144,11 +144,6 @@ def search():
         print(f"Search error: {str(e)}")
         return render_template('error.html', message=str(e))
 
-@app.route('/debug')
-def debug():
-    test_url = "https://www.healthline.com/nutrition/fish-oil-benefits"
-    return get_page_content(test_url)
-
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html', message="Page not found"), 404
